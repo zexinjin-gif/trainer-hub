@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Coaching Philosophy | Trainer Hub</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="back-link" href="coaching.html">&larr; Back</a>
+    <h1>Coaching Philosophy</h1>
+  </header>
+
+  <main class="content content-wide">
+    <div class="progress-bar">
+      <span id="progress-count">0 of 5</span> watched
+      <button id="reset-progress" class="reset-btn" type="button">Reset</button>
+    </div>
+
+    <p class="intro">Tap a thumbnail to watch. Tap "Read script" if you'd rather read it.</p>
+
+    <div class="video-grid">
+      <div class="video-item" data-id="j5D4bUq8FTQ">
+        <a class="thumb-link" href="https://youtube.com/shorts/j5D4bUq8FTQ" target="_blank" rel="noopener">
+          <div class="thumb-wrap">
+            <img src="https://i.ytimg.com/vi/j5D4bUq8FTQ/hqdefault.jpg" alt="Engagement 1" loading="lazy">
+            <span class="play-icon" aria-hidden="true">&#9658;</span>
+            <span class="watched-badge" aria-hidden="true">&#10003;</span>
+          </div>
+        </a>
+        <span class="caption">Engagement 1</span>
+        <a class="script-link" href="scripts/engagement-1.html">Read script</a>
+      </div>
+
+      <div class="video-item" data-id="jcvAdLTuUCg">
+        <a class="thumb-link" href="https://youtube.com/shorts/jcvAdLTuUCg" target="_blank" rel="noopener">
+          <div class="thumb-wrap">
+            <img src="https://i.ytimg.com/vi/jcvAdLTuUCg/hqdefault.jpg" alt="Engagement 2" loading="lazy">
+            <span class="play-icon" aria-hidden="true">&#9658;</span>
+            <span class="watched-badge" aria-hidden="true">&#10003;</span>
+          </div>
+        </a>
+        <span class="caption">Engagement 2</span>
+        <a class="script-link" href="scripts/engagement-2.html">Read script</a>
+      </div>
+
+      <div class="video-item" data-id="31EPc2fXs7Y">
+        <a class="thumb-link" href="https://youtube.com/shorts/31EPc2fXs7Y" target="_blank" rel="noopener">
+          <div class="thumb-wrap">
+            <img src="https://i.ytimg.com/vi/31EPc2fXs7Y/hqdefault.jpg" alt="When a new person comes in, part 1" loading="lazy">
+            <span class="play-icon" aria-hidden="true">&#9658;</span>
+            <span class="watched-badge" aria-hidden="true">&#10003;</span>
+          </div>
+        </a>
+        <span class="caption">New Person (Part 1)</span>
+        <a class="script-link" href="scripts/first-class-1.html">Read script</a>
+      </div>
+
+      <div class="video-item" data-id="5gGK_2btUzA">
+        <a class="thumb-link" href="https://youtube.com/shorts/5gGK_2btUzA" target="_blank" rel="noopener">
+          <div class="thumb-wrap">
+            <img src="https://i.ytimg.com/vi/5gGK_2btUzA/hqdefault.jpg" alt="When a new person comes in, part 2" loading="lazy">
+            <span class="play-icon" aria-hidden="true">&#9658;</span>
+            <span class="watched-badge" aria-hidden="true">&#10003;</span>
+          </div>
+        </a>
+        <span class="caption">New Person (Part 2)</span>
+        <a class="script-link" href="scripts/first-class-2.html">Read script</a>
+      </div>
+
+      <div class="video-item" data-id="BQaNy_-c-eQ">
+        <a class="thumb-link" href="https://youtube.com/shorts/BQaNy_-c-eQ" target="_blank" rel="noopener">
+          <div class="thumb-wrap">
+            <img src="https://i.ytimg.com/vi/BQaNy_-c-eQ/hqdefault.jpg" alt="When a new person comes in, part 3" loading="lazy">
+            <span class="play-icon" aria-hidden="true">&#9658;</span>
+            <span class="watched-badge" aria-hidden="true">&#10003;</span>
+          </div>
+        </a>
+        <span class="caption">New Person (Part 3)</span>
+        <a class="script-link" href="scripts/first-class-3.html">Read script</a>
+      </div>
+    </div>
+
+    <section class="bonus-reading">
+      <h2>Bonus Reading</h2>
+      <a class="doc-card" href="scripts/philosophy.html">
+        <h2>The F45 Crows Nest Philosophy</h2>
+        <p>The full written version of "we coach the person, not the workout."</p>
+      </a>
+    </section>
+  </main>
+
+  <script>
+    const STORAGE_KEY = 'coaching-philosophy-watched';
+    const items = document.querySelectorAll('.video-item');
+    const progressEl = document.getElementById('progress-count');
+    const resetBtn = document.getElementById('reset-progress');
+
+    function getWatched() {
+      try {
+        return JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+      } catch (e) {
+        return [];
+      }
+    }
+
+    function saveWatched(list) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+    }
+
+    function render() {
+      const watched = getWatched();
+      let count = 0;
+      items.forEach(item => {
+        const id = item.dataset.id;
+        if (watched.includes(id)) {
+          item.classList.add('watched');
+          count++;
+        } else {
+          item.classList.remove('watched');
+        }
+      });
+      progressEl.textContent = `${count} of ${items.length}`;
+    }
+
+    items.forEach(item => {
+      const thumbLink = item.querySelector('.thumb-link');
+      thumbLink.addEventListener('click', () => {
+        const id = item.dataset.id;
+        const watched = getWatched();
+        if (!watched.includes(id)) {
+          watched.push(id);
+          saveWatched(watched);
+          render();
+        }
+      });
+    });
+
+    resetBtn.addEventListener('click', () => {
+      saveWatched([]);
+      render();
+    });
+
+    render();
+  </script>
+</body>
+</html>
