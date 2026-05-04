@@ -44,22 +44,29 @@ An internal staff portal for F45 Crows Nest trainers. Public URL (no auth gate, 
 
 **Why:** HEIC is an Apple-only format that doesn't display in most browsers. Raw iPhone photos are also large (3-5MB each) and would bloat the repo and slow page loads. Converted JPGs are typically 5x smaller.
 
-## Connected routine (keep in sync)
+## Connected routine (weekly changelog)
 
-There is a weekly **remote Claude routine** that generates the Tuesday trainer-group WhatsApp message:
+There is a weekly **remote Claude routine** that generates the Tuesday trainer-group WhatsApp message. The whole point of this routine is to send a **weekly changelog**: what's new on the Trainer Hub since last Tuesday, so trainers stay engaged with new content.
 
 - **ID:** `trig_01WQGaD88yz7K5cv7F9xkBXn`
 - **Name:** "Tuesday Trainer Video + Website Nudge"
-- **Schedule:** Mondays at 21:00 UTC = Tuesdays 7am Sydney (creates a Calendar event for 11am that same day)
-- **Owner of the routine logic:** this Claude session (the Trainer Website project Claude). Whenever site features change, the routine's prompt should also be updated so the generated WhatsApp messages reference real, current features. The routine itself still fires from Anthropic's cloud.
+- **Schedule:** Mondays at 21:00 UTC = Tuesdays 7am Sydney (creates a Calendar event for 11am that same day, with the WhatsApp draft inside)
+- **The routine fires from Anthropic's cloud, not this local session.**
 
-**When to update the routine prompt:**
-- New section or page added to the site (Coaching, Operations, Sales, etc.)
-- URL changes (the site is currently at https://f45crowsnest.github.io/trainer-hub/)
-- New videos or major content additions
-- Significant restructure (e.g., the Operations shift-picker redesign)
+**This Claude's job (the Trainer Website project Claude):**
 
-**How to update:** use the `RemoteTrigger` tool, action `update`, with the trigger ID above. Load the tool first via `ToolSearch select:RemoteTrigger`. Use `action: get` first to read the current prompt, edit just the parts that need updating, then `action: update` with the full job_config.
+Once a week, before Tuesday morning Sydney time, update the routine prompt with a list of changes from the past 7 days. The routine's message generator uses this list as the actual content of the WhatsApp message. Without an updated list, the routine falls back on stale info.
+
+**Weekly update workflow:**
+
+1. Run `git log --since="<last Tuesday's date>" --pretty=format:'%ad | %s' --date=short` to see the week's commits.
+2. Group commits into 2-5 user-facing bullets (skip purely cosmetic commits, typo fixes, scaffolding). Phrase from a trainer's perspective ("Cleaning Walkthroughs is live, 21 photos with tips" not "added cleaning-walkthroughs.html"). Ignore commits that don't touch trainer-facing content (CLAUDE.md, gitignore, internal refactors).
+3. Replace the **`## THIS WEEK'S UPDATES`** block in the routine prompt with the new bullets. Use `RemoteTrigger` with `action: get` first, then `action: update` with the full job_config.
+4. Do this any time during the week, but ideally on Sunday or Monday so it's fresh when the routine fires Tuesday morning.
+
+**If nothing meaningful shipped that week:** put a single bullet like "no big changes this week, just keep the hub bookmarked and watch the videos if you haven't" so the routine still produces a message instead of going stale.
+
+**Loading RemoteTrigger:** `ToolSearch select:RemoteTrigger` (the tool is deferred and not loaded by default).
 
 ## Update workflow with Claude
 
